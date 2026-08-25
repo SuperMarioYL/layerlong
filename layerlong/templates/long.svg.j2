@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 {{ doc.meta.canvas.w }} {{ doc.meta.canvas.h }}"
+     width="{{ doc.meta.canvas.w }}"
+     font-family="Inter, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif"
+     role="img" aria-label="{{ doc.meta.title }}">
+  <rect x="0" y="0" width="{{ doc.meta.canvas.w }}" height="{{ doc.meta.canvas.h }}" fill="{{ colors.bg }}"/>
+  {% for layer in doc.layers %}
+  <g id="{{ layer.id }}" class="layer layer-{{ layer.kind }}">
+    {% if layer.id in highlight %}
+    <rect x="{{ layer.bbox.x - 6 }}" y="{{ layer.bbox.y - 4 }}" width="{{ layer.bbox.w + 12 }}" height="{{ layer.bbox.h + 8 }}" rx="6" fill="none" stroke="{{ colors.highlight }}" stroke-width="2" stroke-dasharray="5 3" class="diff-highlight"/>
+    <text x="{{ layer.bbox.x + layer.bbox.w - 4 }}" y="{{ layer.bbox.y - 8 }}" text-anchor="end" font-size="11" font-weight="600" fill="{{ colors.highlight }}">changed</text>
+    {% endif %}
+    {% if layer.kind == 'title' %}
+      <text x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 38 }}" font-size="30" font-weight="700" fill="{{ colors.title }}">{{ layer.data.text }}</text>
+      <rect x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 52 }}" width="56" height="4" rx="2" fill="{{ colors.section }}"/>
+    {% elif layer.kind == 'text' and layer.data.role == 'section' %}
+      <text x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 26 }}" font-size="20" font-weight="600" fill="{{ colors.section }}">{{ layer.data.text }}</text>
+      <line x1="{{ layer.bbox.x }}" y1="{{ layer.bbox.y + 40 }}" x2="{{ layer.bbox.x + layer.bbox.w }}" y2="{{ layer.bbox.y + 40 }}" stroke="{{ colors.divider }}" stroke-width="1.5"/>
+    {% elif layer.kind == 'text' %}
+      {% set lines = layer.data.lines or (layer.data.text | wrap(40)) %}
+      <text x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 18 }}" font-size="15" fill="{{ colors.text }}">
+        {% for line in lines %}<tspan x="{{ layer.bbox.x }}" {% if not loop.first %}dy="24"{% else %}dy="0"{% endif %}>{{ line }}</tspan>
+        {% endfor %}</text>
+    {% elif layer.kind == 'stat' %}
+      <text x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 26 }}" font-size="14" fill="{{ colors.muted }}">{{ layer.data.label }}</text>
+      <text x="{{ layer.bbox.x + layer.bbox.w }}" y="{{ layer.bbox.y + 30 }}" text-anchor="end" font-size="22" font-weight="700" fill="{{ colors.value }}">{{ layer.data.value }}{% if layer.data.unit %} <tspan font-size="13" font-weight="500" fill="{{ colors.muted }}">{{ layer.data.unit }}</tspan>{% endif %}</text>
+      <line x1="{{ layer.bbox.x }}" y1="{{ layer.bbox.y + 48 }}" x2="{{ layer.bbox.x + layer.bbox.w }}" y2="{{ layer.bbox.y + 48 }}" stroke="{{ colors.divider }}" stroke-width="1"/>
+    {% elif layer.kind == 'divider' %}
+      <line x1="{{ layer.bbox.x }}" y1="{{ layer.bbox.y + (layer.bbox.h / 2) }}" x2="{{ layer.bbox.x + layer.bbox.w }}" y2="{{ layer.bbox.y + (layer.bbox.h / 2) }}" stroke="{{ colors.divider }}" stroke-width="1.5"/>
+    {% elif layer.kind == 'annotation' %}
+      <rect x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 2 }}" width="3" height="{{ layer.bbox.h - 4 }}" rx="1.5" fill="{{ colors.annotation_bar }}"/>
+      <text x="{{ layer.bbox.x + 12 }}" y="{{ layer.bbox.y + 24 }}" font-size="13" font-style="italic" fill="{{ colors.muted }}">{{ layer.data.text }}</text>
+    {% elif layer.kind == 'chart' %}
+      {% set bars = layer.data["values"] or [] %}
+      {% for b in bars %}
+      {% set by = layer.bbox.y + 10 + (loop.index0 * 30) %}
+      <text x="{{ layer.bbox.x }}" y="{{ by + 14 }}" font-size="12" fill="{{ colors.muted }}">{{ b.label }}</text>
+      <rect x="{{ layer.bbox.x + 90 }}" y="{{ by }}" width="{{ layer.bbox.w - 140 }}" height="16" rx="8" fill="#F0F0F2"/>
+      <rect x="{{ layer.bbox.x + 90 }}" y="{{ by }}" width="{{ (layer.bbox.w - 140) * 0.6 }}" height="16" rx="8" fill="{{ colors.chart }}"/>
+      <text x="{{ layer.bbox.x + layer.bbox.w - 4 }}" y="{{ by + 14 }}" text-anchor="end" font-size="12" font-weight="600" fill="{{ colors.text }}">{{ b.value }}</text>
+      {% endfor %}
+    {% endif %}
+  </g>
+  {% endfor %}
+</svg>

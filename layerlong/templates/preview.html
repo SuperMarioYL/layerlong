@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>layerlong · 分层长图预览</title>
+  <style>
+    :root { --accent: #0071E3; --ink: #1D1D1F; --muted: #6E6E73; --bg: #F5F5F7; --line: #E5E5EA; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+    header { padding: 18px 24px; border-bottom: 1px solid var(--line); background: #fff; }
+    header h1 { font-size: 18px; margin: 0; font-weight: 700; }
+    header p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+    main { display: grid; grid-template-columns: 380px 1fr; gap: 0; height: calc(100vh - 73px); }
+    .panel { padding: 20px; overflow: auto; }
+    .editor { border-right: 1px solid var(--line); background: #fff; }
+    .editor textarea { width: 100%; min-height: 360px; font-family: "SF Mono", Menlo, monospace; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; resize: vertical; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
+    button { background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    button.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+    select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; }
+    .preview { background: #fff; }
+    .preview .meta { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+    .preview svg { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+    .status { font-size: 12px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+    code { background: #F0F0F2; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>layerlong · 分层长图预览</h1>
+    <p>粘贴 markdown → 分层 SVG 长图（每图层可寻址）→ 浏览器侧 PNG 导出</p>
+  </header>
+  <main>
+    <section class="panel editor">
+      <div class="toolbar">
+        <select id="platform">
+          <option value="gzh">公众号 750</option>
+          <option value="xhs">小红书 1080</option>
+        </select>
+        <button id="render-btn">渲染</button>
+        <button id="png-btn" class="secondary">导出 PNG</button>
+      </div>
+      <textarea id="markdown" spellcheck="false"># 2024 增长复盘
+## 关键指标
+stat: 月活用户 | 1280 | 万
+stat: 增长率 | 23.5 | %
+stat: 留存率 | 68 | %
+---
+> 数据来源：内部统计
+</textarea>
+      <div class="status" id="status"></div>
+      <p class="hint">
+        改一个 <code>stat</code> 的值再渲染——每图层是一个可寻址的 <code>&lt;g id&gt;</code>，
+        产物是可编辑分层矢量，不是扁平 PNG。CLI：<code>layerlong render input.md -o out/</code>
+      </p>
+    </section>
+    <section class="panel preview">
+      <div class="meta" id="meta">点「渲染」生成第一张分层长图。</div>
+      <div id="stage"></div>
+    </section>
+  </main>
+  <script src="/static/preview.js"></script>
+</body>
+</html>

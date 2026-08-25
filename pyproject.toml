@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "layerlong"
+version = "0.1.0"
+description = "公众号/小红书作者的分层 SVG/HTML 信息长图工具：改一处数据，per-layer diff 可见，只重渲变化图层。"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [{ name = "SuperMarioYL" }]
+keywords = ["svg", "long-image", "wechat", "xiaohongshu", "infographic", "diff"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Text Processing :: Markup",
+]
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "jinja2>=3.1",
+  "pydantic>=2.9",
+  "click>=8.1",
+  "openai>=1.40",
+]
+
+[project.scripts]
+layerlong = "layerlong.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/SuperMarioYL/layerlong"
+
+[tool.hatch.build.targets.wheel]
+packages = ["layerlong"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"layerlong/templates" = "layerlong/templates"
+"layerlong/static" = "layerlong/static"

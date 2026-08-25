@@ -1,0 +1,44 @@
+# build scratch
+.builder_*
+.build_metadata*
+.stage_*
+.spawn_*
+PUBLISH_BLOCKED.md
+BUILD_SETUP_NEXT_STEPS.md
+
+# editor / agent local
+.claude/
+CLAUDE.md
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# virtualenvs
+.venv/
+venv/
+env/
+
+# tests / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# rendered output (author-owned artifacts)
+out/
+*.diff.html
+
+# os
+.DS_Store
+Thumbs.db
