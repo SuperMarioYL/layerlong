@@ -211,5 +211,6 @@
         "code": "layerlong render examples/sample.md -o out/\nlayerlong render data.csv -o out/ --platform xhs\nlayerlong diff previous.json current.json\nlayerlong extract text.txt -o out/ --model mock"
       }
     ]
-  }
+  },
+  "content_version": "v0.1.0"
 }
