@@ -1,0 +1,78 @@
+{
+  "name": "layerlong",
+  "tagline": "Review infographic changes one layer at a time.",
+  "architecture": {
+    "title": "How layerlong works",
+    "nodes": [
+      {
+        "title": "Input parser",
+        "detail": "layerlong/parser.py"
+      },
+      {
+        "title": "LayerDoc",
+        "detail": "layerlong/models.py"
+      },
+      {
+        "title": "Layer diff",
+        "detail": "layerlong/diff.py"
+      },
+      {
+        "title": "SVG / HTML",
+        "detail": "layerlong/renderer.py"
+      }
+    ],
+    "edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  "process": {
+    "title": "From input to a useful result",
+    "steps": [
+      {
+        "title": "Parse input",
+        "detail": "Bundled sample Markdown"
+      },
+      {
+        "title": "Edit one value",
+        "detail": "23.5 becomes 31.2"
+      },
+      {
+        "title": "Compare layers",
+        "detail": "Semantic IDs and SVG"
+      }
+    ],
+    "result": "The recorded result identifies the changed semantic layer while the other layers remain unchanged."
+  },
+  "integrations": {
+    "title": "Supported input and output routes",
+    "items": [
+      {
+        "title": "Markdown / CSV",
+        "detail": "Structured infographic input"
+      },
+      {
+        "title": "LayerDoc JSON",
+        "detail": "Saved editable source"
+      },
+      {
+        "title": "SVG / HTML",
+        "detail": "Layer-addressable exports"
+      },
+      {
+        "title": "Diff HTML",
+        "detail": "Semantic change highlights"
+      }
+    ]
+  }
+}

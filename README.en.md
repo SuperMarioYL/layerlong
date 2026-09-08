@@ -1,169 +1,127 @@
-<div align="right"><sub><b>English</b>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="./README.md">简体中文</a></sub></div>
+[简体中文](./README.md) · [Website](https://layerlong.lei6393.com) · [GitHub](https://github.com/SuperMarioYL/layerlong)
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/hero-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/hero-light.svg">
-    <img src="./assets/hero-light.svg" width="880" alt="layerlong">
-  </picture>
-</p>
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/presentation/hero-mobile-dark.svg">
+  <source media="(max-width: 600px)" srcset="./assets/presentation/hero-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/presentation/hero-dark.svg">
+  <img src="./assets/presentation/hero-light.svg" width="960" alt="Hero diagram">
+</picture>
 
-<p align="center"><sub>A layered SVG/HTML long-image tool for WeChat Official Account / Xiaohongshu authors — change one data point and only that layer re-renders, diffable, no more redrawing the whole image.</sub></p>
+# layerlong
 
-<p align="center">
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="license"></a>
-  <a href="https://github.com/SuperMarioYL/layerlong/releases"><img src="https://img.shields.io/github/v/release/SuperMarioYL/layerlong" alt="release"></a>
-  <a href="https://github.com/SuperMarioYL/layerlong/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/SuperMarioYL/layerlong/ci.yml?branch=main&label=CI" alt="CI"></a>
-  <img src="https://img.shields.io/badge/python-3.12%2B-blue" alt="python">
-  <img src="https://img.shields.io/badge/long--image-layered-0071E3" alt="layered">
-</p>
+**Review infographic changes one layer at a time.**
 
-<p align="center"><b>Redraw the whole long image just to change one number? layerlong replaces flat PNG with layered SVG/HTML long images — change one data point, see the per-layer diff, re-render only the changed layer, never redraw the whole thing.</b></p>
+layerlong keeps an infographic as a structured LayerDoc and exports editable SVG and HTML alongside the JSON source.
 
----
+## Why use it
 
-<h2><img src="https://api.iconify.design/tabler:topology-star-3.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Architecture</h2>
+When a statistic changes, reviewing a flat image gives little indication of what moved. Stable layer IDs let you compare semantic content and keep the source for the next revision.
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/atlas-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/atlas-light.svg">
-    <img src="./assets/atlas-light.svg" width="880" alt="Architecture: markdown/CSV → LayerDoc → layered SVG/HTML">
-  </picture>
-</p>
+- **Keep editable source** — LayerDoc JSON survives image export.
+- **Compare by layer** — Changes are tied to layer IDs and content.
+- **Export vector and HTML** — Use SVG and HTML from the same document.
 
-A single Python process: markdown/CSV/text → **LayerDoc** (a diffable layered long-image document) → the renderer produces editable layered SVG/HTML (each layer an addressable `<g id>` / `<section id>`). Changing one data point affects only the layer mapped to it; the diff is visible at layer granularity, and the renderer re-renders only changed layers. PNG export is done browser-side via canvas, avoiding cairo system dependencies.
+## Architecture
 
-## Contents
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/presentation/architecture-mobile-dark.svg">
+  <source media="(max-width: 600px)" srcset="./assets/presentation/architecture-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/presentation/architecture-dark.svg">
+  <img src="./assets/presentation/architecture-light.svg" width="960" alt="Architecture diagram">
+</picture>
 
-- [Why this exists](#why-this-exists)
-- [Install & Quickstart](#install--quickstart)
-- [Usage](#usage)
-- [Demo](#demo)
-- [Configuration](#configuration)
-- [Pricing](#pricing)
-- [Roadmap](#roadmap)
-- [License](#license)
+Markdown and CSV parsers create LayerDoc objects. The renderer writes SVG and HTML for all layers. diff_docs pairs layers by ID and compares kind/data; a diff view highlights changed layers. The current CLI regenerates complete output files rather than caching only changed render work.
 
-<h2><img src="https://api.iconify.design/tabler:bulb.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Why this exists</h2>
+| Component | Responsibility |
+| --- | --- |
+| `Input parser` | layerlong/parser.py |
+| `LayerDoc` | layerlong/models.py |
+| `Layer diff` | layerlong/diff.py |
+| `SVG / HTML` | layerlong/renderer.py |
 
-Authors of "information long images" on WeChat Official Accounts and Xiaohongshu get a flat PNG back today — every layer is flattened on export. When an author finds a wrong number, or wants to update a title figure for a new issue, they must reopen the Figma/PS source, locate it by hand, change it, re-export the whole PNG, and re-upload.
+## Install and quickstart
 
-layerlong treats a long image as a layered vector project file with semantic regions: every title, data row, and annotation is an addressable layer you can edit in place and compare against the previous version — no full redraw. The new primitive is **LayerDoc**, an editable, diffable layered long-image document that does not exist in any competitor.
-
-<h2><img src="https://api.iconify.design/tabler:rocket.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Install & Quickstart</h2>
+Build with the version declared in the repository manifest. Run the example from the repository root.
 
 ```bash
-git clone https://github.com/SuperMarioYL/layerlong.git && cd layerlong
-pip install -e .
+git clone https://github.com/SuperMarioYL/layerlong.git
+cd layerlong
+uv venv .venv
+uv pip install --python .venv/bin/python -e .
+source .venv/bin/activate
+```
+
+Change the bundled sample growth value from 23.5 to 31.2, compute the layer diff and generate SVG in memory.
+
+```bash
+.venv/bin/python examples/presentation-demo.py
+```
+
+## Recorded demo
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/presentation/process-mobile-dark.svg">
+  <source media="(max-width: 600px)" srcset="./assets/presentation/process-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/presentation/process-dark.svg">
+  <img src="./assets/presentation/process-light.svg" width="960" alt="Process diagram">
+</picture>
+
+The recorded result identifies the changed semantic layer while the other layers remain unchanged.
+
+```text
+{
+  "layers": 11,
+  "changed_ids": [
+    "stat-1"
+  ],
+  "unchanged": 10,
+  "svg_produced": true
+}
+```
+
+The complete command and output are recorded in [docs/demo-results.json](./docs/demo-results.json). Inputs and reproduction code are included in the repository.
+
+## Usage
+
+The CLI exposes the following operations. Commands after the example use your own paths or identifiers.
+
+```bash
 layerlong render examples/sample.md -o out/
-```
-
-<details><summary>sample output</summary>
-
-```
-已渲染 → out/long.svg + long.html
-```
-
-`out/` contains three artifacts:
-
-- `long.svg` — layered, editable SVG (each layer a `<g id="...">`)
-- `long.html` — layered HTML long image (each layer a `<section id="...">`)
-- `long.json` — the LayerDoc source (an author-owned asset you can edit again and again)
-
-</details>
-
-Change one number, re-render with `--prev` to see the diff:
-
-```bash
-sed 's/23.5/31.2/' examples/sample.md > sample_v2.md
-layerlong render sample_v2.md -o out2/ --prev out/long.json
-# → diff: 1 / 11 layers changed, changed layers → ['stat-1']
-```
-
-<h2><img src="https://api.iconify.design/tabler:terminal-2.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Usage</h2>
-
-`layerlong` has three subcommands: `render`, `extract`, `diff`.
-
-**1. Render markdown/CSV/JSON → layered long image**
-
-```bash
-layerlong render examples/sample.md -o out/ --platform gzh
 layerlong render data.csv -o out/ --platform xhs
-layerlong render long.json -o out/        # render a saved LayerDoc directly
+layerlong diff previous.json current.json
+layerlong extract text.txt -o out/ --model mock
 ```
 
-**2. Per-layer diff after a data change (re-render only the changed layer)**
+## Configuration
 
-```bash
-layerlong render sample_v2.md -o out2/ --prev out/long.json
-# produces out2/long.diff.html, highlighting only changed layers
-layerlong diff out/long.json out2/long.json
-# prints per-layer added/removed/changed/unchanged
-```
+render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. extract defaults to mock; online extraction requires the selected provider configuration.
 
-**3. One-shot extract of structured draft from free text (mock by default, zero API key)**
+## Integrations and responsibilities
 
-```bash
-layerlong extract raw_text.txt -o draft/ --model mock
-# optional domestic models (bring your own key): --model deepseek|qwen|glm, export LAYERLONG_API_KEY
-layerlong render draft/long.json -o out/
-```
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/presentation/integrations-mobile-dark.svg">
+  <source media="(max-width: 600px)" srcset="./assets/presentation/integrations-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/presentation/integrations-dark.svg">
+  <img src="./assets/presentation/integrations-light.svg" width="960" alt="Integrations diagram">
+</picture>
 
-The markdown schema is tiny:
+The following routes are implemented in the source. Choose the input that matches your task and keep the resulting artifact with your project.
 
-```
-# Title                       → title layer
-## Section                    → section layer
-stat: label | value | unit    → stat layer (changing the value touches only this layer)
-chart: label,value; label,value;… → chart layer (bars)
----                           → divider layer
-> source / note               → annotation layer
-```
+| Route | Implemented role |
+| --- | --- |
+| Markdown / CSV | Structured infographic input |
+| LayerDoc JSON | Saved editable source |
+| SVG / HTML | Layer-addressable exports |
+| Diff HTML | Semantic change highlights |
 
-<h2><img src="https://api.iconify.design/tabler:photo.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Demo</h2>
+## Limits and next steps
 
-<p align="center"><img src="./assets/demo.svg" width="880" alt="Demo: flat PNG whole-redraw vs layered SVG single-layer re-render"></p>
+- Coordinate-only layout changes are not counted as semantic changes; diff compares layer kind and data.
+- The current CLI rewrites full outputs. A smaller changed-layer count is not evidence of incremental rendering speed.
+- The example uses deterministic parsing and does not exercise optional model extraction.
 
-Left half = flat PNG: change one data point → the whole image flashes + "redraw 整张". Right half = layered SVG: same change → only the changed layer highlights + re-renders, "1 layer changed". layerlong's moat is editable layered vector graphics, not a one-shot bitmap.
+True incremental rendering and broader export validation are future directions. Preserve the saved LayerDoc when editing so comparisons use explicit structured versions.
 
-<h2><img src="https://api.iconify.design/tabler:adjustments.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Configuration</h2>
+## License and contributions
 
-Canvas presets (v0.1 ships only the two Chinese-platform surfaces):
-
-| Preset | `--platform` | Canvas width | Margin | Title safe zone |
-|---|---|---|---|---|
-| WeChat OA | `gzh` | 750 | 40 | top 80px |
-| Xiaohongshu | `xhs` | 1080 | 56 | top 120px |
-
-Environment variables (model extraction only; not needed for mock):
-
-| Variable | Meaning |
-|---|---|
-| `LAYERLONG_API_KEY` | API key for domestic models (DeepSeek/Qwen/GLM, OpenAI-compatible) |
-
-<h2><img src="https://api.iconify.design/tabler:credit-card.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Pricing</h2>
-
-**v0.1 is fully free and open source** — the mock extraction backend needs zero API keys, and the core diff / rendering / template engine are all open. The moat is format ownership (LayerDoc); closing it off would weaken network effects, so the core stays open.
-
-Paid layers arrive in **v0.2+** (explicitly excluded from v0.1, but a commercial audience needs a monetization story):
-
-- **One-off watermark-free HD export** — ¥9.9/image: the free web preview exports PNGs with a light watermark + limited resolution; unlock that one image's HD watermark-free export with a single tap before publishing (the lowest-friction pay gate).
-- **Premium template packs** — ¥39–99/pack: brand colors / fonts / logos locked into a LayerDoc template; a continuing acquisition funnel.
-- **Brand kit + hosting** — ¥99/month or ¥888/year: brand locking + watermark-free high-resolution PNG export.
-- **Team plan** — ¥999/month (≤5 seats): shared LayerDoc sources + collaboration comments.
-
-The LayerDoc source always stays in the author's local / OSS repo; the hosted layer stores only premium templates and brand-kit config — avoiding the trust risk of locking user content into the cloud.
-
-<h2><img src="https://api.iconify.design/tabler:map-2.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> Roadmap</h2>
-
-- [x] **m1** hardcoded layered SVG PoC + per-layer diff (interview gate)
-- [x] **m2** renderer: markdown/CSV → layered SVG/HTML + per-layer diff (re-render only changed layers) — CLI `layerlong render` works
-- [ ] **m3** FastAPI preview page (paste markdown → layered long image → change one datum → diff highlight → browser-side PNG export) + publish to GitHub / Gitee
-- [ ] v0.2 visual drag-drop layer editor, template marketplace, brand kits, CLI PNG export, multi-size canvas
-
-<h2><img src="https://api.iconify.design/tabler:license.svg?color=%230071E3&width=24" height="22" align="absmiddle" alt=""> License</h2>
-
-MIT — see [LICENSE](./LICENSE). File bugs / template requests in [Issues](https://github.com/SuperMarioYL/layerlong/issues), or send a PR directly.
-
-<p align="center"><sub><a href="./LICENSE">MIT</a> © 2026 SuperMarioYL</sub></p>
+See [LICENSE](./LICENSE). When reporting an issue, include a minimal input, the command, and the observed output.

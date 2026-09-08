@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "layerlong"
 version = "0.1.0"
-description = "公众号/小红书作者的分层 SVG/HTML 信息长图工具：改一处数据，per-layer diff 可见，只重渲变化图层。"
+description = "Render Markdown, CSV or LayerDoc JSON as layered SVG/HTML infographics and compare semantic changes by layer ID."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"

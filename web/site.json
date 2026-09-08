@@ -1,92 +1,215 @@
 {
-  "schema": 1,
+  "schema": 3,
   "name": "layerlong",
   "github": "https://github.com/SuperMarioYL/layerlong",
   "host": "layerlong.lei6393.com",
-  "lang": { "primary": "zh", "toggle": true },
-  "accent": ["#0071E3", "#34A0FF", "#5AC8FA"],
-  "content_version": "v0.1.0",
-  "generated_at": "2026-08-25T16:30:00Z",
+  "palette": "auto",
+  "lang": {
+    "primary": "en",
+    "toggle": true
+  },
+  "meta": {
+    "visual_style": "neon-particle",
+    "demo_source": "docs/demo-results.json"
+  },
   "hero": {
-    "eyebrow": {
-      "zh": "分层长图 · 就地改 · 逐层对比",
-      "en": "Layered long images · edit in place · compare layer by layer"
-    },
     "headline": {
-      "zh": "改一处数据。\n只重渲那一层。",
-      "en": "Change one data point.\nOnly that layer re-renders."
+      "en": "Review infographic changes one layer at a time.",
+      "zh": "逐图层检查信息长图的变化。"
     },
     "sub": {
-      "zh": "扁平长图改一个数字就要整张重画、重新上传。layerlong 把它变成可编辑、可对比的分层长图——改一处数据，只有变化的那一层重新渲染，其余图层原样不动，改在哪、变了什么一眼可见。",
-      "en": "Flat long images make you redraw and re-upload the whole thing to change one number. layerlong turns them into editable, comparable layered images — change one data point and only that layer re-renders, the rest stay untouched, and what changed is visible at a glance."
+      "en": "layerlong keeps an infographic as a structured LayerDoc and exports editable SVG and HTML alongside the JSON source.",
+      "zh": "layerlong 用结构化 LayerDoc 保存信息长图，并导出可编辑 SVG、HTML 与 JSON 源文件。"
     },
-    "command": "layerlong render examples/sample.md -o out/",
-    "cta": { "zh": "开始使用", "en": "Get started" },
-    "ctaGithub": { "zh": "查看 GitHub", "en": "View on GitHub" },
-    "scroll": { "zh": "看看怎么分层", "en": "See how it layers" }
+    "href": "#quickstart"
   },
   "advantages": [
     {
       "title": {
-        "zh": "改一处数据，只重渲那一层",
-        "en": "Change one datum, rerender only that layer"
+        "en": "Keep editable source",
+        "zh": "保留可编辑源"
       },
       "body": {
-        "zh": "以前改一个数字，要重开源文件、肉眼定位、改完再整张导出、重新上传。layerlong 把每个标题、数据行、标注都变成可寻址的图层——改一处数据，只有映射到它的那一层重新渲染，其余图层原样保留。",
-        "en": "You used to reopen the source file, hunt the spot by eye, re-export the whole image, and re-upload just to fix one number. layerlong turns every title, data row, and annotation into an addressable layer — change one datum and only the layer mapped to it re-renders; the rest stay exactly as they were."
-      },
-      "chips": ["› 改一处只动一层", "› 其余图层原样保留", "› 不再整张重画"]
+        "en": "LayerDoc JSON survives image export.",
+        "zh": "图片导出后仍保留 LayerDoc JSON。"
+      }
     },
     {
       "title": {
-        "zh": "改了哪一层，一眼可见",
-        "en": "Which layer changed — visible at a glance"
+        "en": "Compare by layer",
+        "zh": "按图层比较"
       },
       "body": {
-        "zh": "两版长图之间，逐图层告诉你哪些新增、删除、改动、未变；变化的那一层高亮出来，配上一句\"X / Y 层变化 · 只重渲变化层\"。改在哪、动了什么，不用再肉眼逐行比对。",
-        "en": "Between two versions, it tells you per layer what was added, removed, changed, or left untouched — the changed layers are highlighted, with a banner reading \"X / Y layers changed · only changed layers re-rendered.\" No more eyeballing line by line to find the edit."
-      },
-      "chips": ["› 逐图层标出变化", "› 变化层高亮", "› 一句话点出动了哪几层"]
+        "en": "Changes are tied to layer IDs and content.",
+        "zh": "变化对应图层 ID 与内容。"
+      }
     },
     {
       "title": {
-        "zh": "一份你能反复改的源",
-        "en": "A source you can edit again and again"
+        "en": "Export vector and HTML",
+        "zh": "导出矢量与 HTML"
       },
       "body": {
-        "zh": "扁平图导出即终点——源锁在设计软件里，下次想改只能从头来。layerlong 给你一份可编辑、可保存的分层源：每个图层都能就地改、与上一版对比、再渲染，源始终在你手里，不被锁进任何工具。",
-        "en": "A flat image is a dead end — the source stays locked inside the design tool, so the next edit starts from scratch. layerlong hands you an editable, saveable layered source: every layer can be changed in place, compared against the previous version, and re-rendered, and the source stays in your hands — never locked into any tool."
-      },
-      "chips": ["› 可编辑分层源在你手里", "› 就地改 · 可对比 · 可再渲", "› 不被锁进设计软件"]
-    },
-    {
-      "title": {
-        "zh": "贴段文本，直接出分层长图",
-        "en": "Paste some text, get a layered long image"
-      },
-      "body": {
-        "zh": "粘一段 markdown 或表格，按公众号或小红书的画布与标题安全区排成分层长图；只有一段白话文字，也能一键抽成结构化草稿再渲染。默认离线、零密钥起步，要更准可换你自己的。",
-        "en": "Paste a markdown snippet or a table and it's laid out into a layered long image on the WeChat or Xiaohongshu canvas, with titles kept inside the safe-zone. Got only plain prose? One step turns it into a structured draft you can render. Starts offline and zero-key; bring your own when you want more."
-      },
-      "chips": ["› markdown / 表格直出", "› 白话文一键抽草稿", "› 公众号 + 小红书画布预设", "› 标题只排进安全区"]
+        "en": "Use SVG and HTML from the same document.",
+        "zh": "同一文档可生成 SVG 与 HTML。"
+      }
     }
   ],
-  "scene": { "kind": "particle-field" },
-  "cta": {
-    "headline": {
-      "zh": "把扁平长图，换成分层长图。",
-      "en": "Swap flat long images for layered ones."
+  "demo": {
+    "title": {
+      "en": "Run it on a complete example",
+      "zh": "运行完整示例"
     },
-    "sub": {
-      "zh": "开源 · MIT · 一条命令跑通。改一处数据，只重渲一层。",
-      "en": "Open source · MIT · runs in one command. Change one datum, rerender one layer."
+    "note": {
+      "en": "Change the bundled sample growth value from 23.5 to 31.2, compute the layer diff and generate SVG in memory.",
+      "zh": "把随仓增长率从 23.5 改为 31.2，计算图层差异，并在内存中生成 SVG。"
     },
-    "button": { "zh": "查看 GitHub", "en": "View on GitHub" }
+    "source": "https://github.com/SuperMarioYL/layerlong/blob/main/docs/demo-results.json",
+    "steps": [
+      {
+        "label": "Recorded run",
+        "body": "Parse the bundled synthetic infographic, change growth 23.5 to 31.2, compute semantic layer changes and produce SVG; no model extraction or incremental rendering benchmark.",
+        "command": ".venv/bin/python examples/presentation-demo.py",
+        "output": "{\n  \"layers\": 11,\n  \"changed_ids\": [\n    \"stat-1\"\n  ],\n  \"unchanged\": 10,\n  \"svg_produced\": true\n}",
+        "image": "/assets/presentation/demo-0-light.svg",
+        "imageDark": "/assets/presentation/demo-0-dark.svg"
+      }
+    ]
   },
-  "footer": {
-    "tag": {
-      "zh": "layerlong — 给公众号 / 小红书长图作者的分层长图工具 · MIT 开源",
-      "en": "layerlong — the layered long-image tool for WeChat & Xiaohongshu authors · MIT open source"
+  "quickstart": {
+    "title": {
+      "en": "Try it locally",
+      "zh": "本地上手"
+    },
+    "body": {
+      "en": "Change the bundled sample growth value from 23.5 to 31.2, compute the layer diff and generate SVG in memory.",
+      "zh": "把随仓增长率从 23.5 改为 31.2，计算图层差异，并在内存中生成 SVG。"
+    },
+    "steps": [
+      {
+        "title": {
+          "en": "Install from source",
+          "zh": "从源码安装"
+        },
+        "code": "git clone https://github.com/SuperMarioYL/layerlong.git\ncd layerlong\nuv venv .venv\nuv pip install --python .venv/bin/python -e .\nsource .venv/bin/activate"
+      },
+      {
+        "title": {
+          "en": "Run the included example",
+          "zh": "运行随仓示例"
+        },
+        "code": ".venv/bin/python examples/presentation-demo.py"
+      }
+    ]
+  },
+  "limitations": [
+    {
+      "en": "Coordinate-only layout changes are not counted as semantic changes; diff compares layer kind and data.",
+      "zh": "仅坐标变化不计为语义变化；diff 比较图层 kind 与 data。"
+    },
+    {
+      "en": "The current CLI rewrites full outputs. A smaller changed-layer count is not evidence of incremental rendering speed.",
+      "zh": "当前 CLI 重写完整输出。较少的变化图层不代表已实现增量渲染加速。"
+    },
+    {
+      "en": "The example uses deterministic parsing and does not exercise optional model extraction.",
+      "zh": "示例使用确定性解析，不验证可选模型抽取。"
     }
+  ],
+  "scene": {
+    "kind": "neon-graph",
+    "fallback": "/assets/presentation/scene-dark.svg",
+    "fallbackLight": "/assets/presentation/scene-light.svg"
+  },
+  "story": {
+    "intro": {
+      "title": {
+        "en": "A concrete task",
+        "zh": "从实际任务出发"
+      },
+      "body": {
+        "en": "When a statistic changes, reviewing a flat image gives little indication of what moved. Stable layer IDs let you compare semantic content and keep the source for the next revision.",
+        "zh": "指标更新时，扁平图片难以指出具体改了哪里。稳定图层 ID 让你比较语义内容，并保留下一次修改所需的源文件。"
+      }
+    },
+    "sections": [
+      {
+        "title": {
+          "en": "Follow the operation",
+          "zh": "处理过程"
+        },
+        "body": {
+          "en": "Markdown and CSV parsers create LayerDoc objects. The renderer writes SVG and HTML for all layers. diff_docs pairs layers by ID and compares kind/data; a diff view highlights changed layers. The current CLI regenerates complete output files rather than caching only changed render work.",
+          "zh": "Markdown 与 CSV 解析器生成 LayerDoc；渲染器为全部图层写出 SVG 和 HTML。diff_docs 按 ID 配对并比较 kind/data，差异视图高亮变化层。当前 CLI 会重新生成完整文件，并未缓存仅有变化的渲染工作。"
+        },
+        "image": {
+          "light": "/assets/presentation/process-light.svg",
+          "dark": "/assets/presentation/process-dark.svg",
+          "alt": {
+            "en": "Follow the operation",
+            "zh": "处理过程"
+          }
+        }
+      },
+      {
+        "title": {
+          "en": "How layerlong works",
+          "zh": "layerlong 的工作方式"
+        },
+        "body": {
+          "en": "Markdown and CSV parsers create LayerDoc objects. The renderer writes SVG and HTML for all layers. diff_docs pairs layers by ID and compares kind/data; a diff view highlights changed layers. The current CLI regenerates complete output files rather than caching only changed render work.",
+          "zh": "Markdown 与 CSV 解析器生成 LayerDoc；渲染器为全部图层写出 SVG 和 HTML。diff_docs 按 ID 配对并比较 kind/data，差异视图高亮变化层。当前 CLI 会重新生成完整文件，并未缓存仅有变化的渲染工作。"
+        },
+        "image": {
+          "light": "/assets/presentation/architecture-light.svg",
+          "dark": "/assets/presentation/architecture-dark.svg",
+          "alt": {
+            "en": "How layerlong works",
+            "zh": "layerlong 的工作方式"
+          }
+        }
+      },
+      {
+        "title": {
+          "en": "Connect the pieces",
+          "zh": "输入与输出"
+        },
+        "body": {
+          "en": "The following routes are implemented in the source. Choose the input that matches your task and keep the resulting artifact with your project.",
+          "zh": "以下路径已有源码实现。按任务选择输入，并把生成的结果与项目一起保存。"
+        },
+        "image": {
+          "light": "/assets/presentation/integrations-light.svg",
+          "dark": "/assets/presentation/integrations-dark.svg",
+          "alt": {
+            "en": "Connect the pieces",
+            "zh": "输入与输出"
+          }
+        }
+      }
+    ],
+    "details": [
+      {
+        "title": {
+          "en": "Configuration",
+          "zh": "配置"
+        },
+        "body": {
+          "en": "render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. extract defaults to mock; online extraction requires the selected provider configuration.",
+          "zh": "render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs，--out 指定输出目录，--prev 添加差异 HTML。extract 默认 mock；在线抽取需要对应提供方配置。"
+        }
+      },
+      {
+        "title": {
+          "en": "Further use",
+          "zh": "进一步使用"
+        },
+        "body": {
+          "en": "The CLI exposes the following operations. Commands after the example use your own paths or identifiers.",
+          "zh": "CLI 提供以下操作。示例之外的命令需要替换成你的文件路径或标识。"
+        },
+        "code": "layerlong render examples/sample.md -o out/\nlayerlong render data.csv -o out/ --platform xhs\nlayerlong diff previous.json current.json\nlayerlong extract text.txt -o out/ --model mock"
+      }
+    ]
   }
 }

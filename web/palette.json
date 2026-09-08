@@ -1,0 +1,38 @@
+{
+  "mode": "auto",
+  "id": "569ce6-706ae7-acebf6-730423704f0d",
+  "identity": "https://github.com/supermarioyl/layerlong",
+  "primary": "#569ce6",
+  "secondary": "#706ae7",
+  "highlight": "#acebf6",
+  "dark": {
+    "bg": "#050912",
+    "panel": "#0c131f",
+    "code": "#0a111d",
+    "ink": "#eefbfd",
+    "muted": "#95aac4",
+    "line": "#172941",
+    "primary": "#569ce6",
+    "secondary": "#736de8",
+    "highlight": "#acebf6",
+    "accent": "#569ce6",
+    "buttonStart": "#4379b3",
+    "buttonEnd": "#6c67e0",
+    "buttonText": "#ffffff"
+  },
+  "light": {
+    "bg": "#f9fcfe",
+    "panel": "#f7fafe",
+    "code": "#f3f8fd",
+    "ink": "#131f30",
+    "muted": "#556c88",
+    "line": "#cbe1f7",
+    "primary": "#4075ac",
+    "secondary": "#6863d8",
+    "highlight": "#57777d",
+    "accent": "#4075ac",
+    "buttonStart": "#4379b3",
+    "buttonEnd": "#6c67e0",
+    "buttonText": "#ffffff"
+  }
+}

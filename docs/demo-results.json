@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "source_revision": "e8aa6ee2ae6ec7077ced5f9446a9abbce5c4ffb1",
+  "scope": "Parse the bundled synthetic infographic, change growth 23.5 to 31.2, compute semantic layer changes and produce SVG; no model extraction or incremental rendering benchmark.",
+  "steps": [
+    {
+      "label": "Recorded run",
+      "body": "Parse the bundled synthetic infographic, change growth 23.5 to 31.2, compute semantic layer changes and produce SVG; no model extraction or incremental rendering benchmark.",
+      "command": ".venv/bin/python examples/presentation-demo.py",
+      "output": "{\n  \"layers\": 11,\n  \"changed_ids\": [\n    \"stat-1\"\n  ],\n  \"unchanged\": 10,\n  \"svg_produced\": true\n}"
+    }
+  ]
+}
