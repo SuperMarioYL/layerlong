@@ -15,6 +15,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from . import __version__
 from .diff import changed_set, diff_docs
 from .parser import parse_markdown
 from .renderer import render_html, render_svg
@@ -23,7 +24,7 @@ _BASE = Path(__file__).parent
 _TEMPLATES = _BASE / "templates"
 _STATIC = _BASE / "static"
 
-app = FastAPI(title="layerlong preview", version="0.1.0")
+app = FastAPI(title="layerlong preview", version=__version__)
 app.mount("/static", StaticFiles(directory=str(_STATIC)), name="static")
 
 

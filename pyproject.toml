@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "layerlong"
-version = "0.1.0"
+version = "0.2.0"
 description = "Render Markdown, CSV or LayerDoc JSON as layered SVG/HTML infographics and compare semantic changes by layer ID."
 readme = "README.md"
 license = "MIT"
