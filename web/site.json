@@ -53,6 +53,16 @@
         "en": "Use SVG and HTML from the same document.",
         "zh": "同一文档可生成 SVG 与 HTML。"
       }
+    },
+    {
+      "title": {
+        "en": "Preview diffs in the browser",
+        "zh": "浏览器内预览 diff"
+      },
+      "body": {
+        "en": "The bundled web preview highlights changed layers on re-render; PNG export always uses the clean SVG.",
+        "zh": "内置预览页再次渲染时高亮变化图层；PNG 导出始终使用干净 SVG。"
+      }
     }
   ],
   "demo": {
@@ -99,6 +109,13 @@
           "zh": "运行随仓示例"
         },
         "code": ".venv/bin/python examples/presentation-demo.py"
+      },
+      {
+        "title": {
+          "en": "See the diff loop in the preview",
+          "zh": "在预览页看 diff 闭环"
+        },
+        "code": "layerlong serve\n# open http://127.0.0.1:8000, change one stat value, render again"
       }
     ]
   },
@@ -207,8 +224,8 @@
           "zh": "配置"
         },
         "body": {
-          "en": "render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. extract defaults to mock; online extraction requires the selected provider configuration.",
-          "zh": "render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs，--out 指定输出目录，--prev 添加差异 HTML。extract 默认 mock；在线抽取需要对应提供方配置。"
+          "en": "render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. serve starts the local web preview, where re-rendering after an edit highlights the changed layers. extract defaults to mock; online extraction requires the selected provider configuration.",
+          "zh": "render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs，--out 指定输出目录，--prev 添加差异 HTML。serve 启动本地 Web 预览页，改一数据再渲染即高亮变化图层。extract 默认 mock；在线抽取需要对应提供方配置。"
         }
       },
       {
@@ -220,7 +237,7 @@
           "en": "The CLI exposes the following operations. Commands after the example use your own paths or identifiers.",
           "zh": "CLI 提供以下操作。示例之外的命令需要替换成你的文件路径或标识。"
         },
-        "code": "layerlong render examples/sample.md -o out/\nlayerlong render data.csv -o out/ --platform xhs\nlayerlong diff previous.json current.json\nlayerlong extract text.txt -o out/ --model mock"
+        "code": "layerlong render examples/sample.md -o out/\nlayerlong render data.csv -o out/ --platform xhs\nlayerlong diff previous.json current.json\nlayerlong extract text.txt -o out/ --model mock\nlayerlong serve"
       }
     ]
   },
