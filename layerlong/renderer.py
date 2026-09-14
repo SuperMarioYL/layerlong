@@ -16,6 +16,25 @@ from .models import LayerDoc, wrap_text
 
 _TEMPLATE_DIR = Path(__file__).parent / "templates"
 
+
+def chart_bar_pcts(bars: list) -> list[float]:
+    """把图表条目换算为相对本图最大值的百分比条宽（SVG/HTML 两种导出共用）。
+
+    每条 = max(2, 100 * value / max_value)，上限 100；非数值或非正的
+    最大值整体退化为 2% 最小条宽——条长必须反映数据本身。
+    """
+    values: list[float] = []
+    for b in bars:
+        try:
+            values.append(float(b.get("value", "")))
+        except (TypeError, ValueError):
+            values.append(0.0)
+    max_v = max(values, default=0.0)
+    if max_v <= 0:
+        return [2.0] * len(bars)
+    return [max(2.0, min(100.0, 100.0 * v / max_v)) for v in values]
+
+
 _env = Environment(
     loader=FileSystemLoader(str(_TEMPLATE_DIR)),
     autoescape=select_autoescape(["html", "xml", "svg", "j2"]),
@@ -23,6 +42,7 @@ _env = Environment(
     lstrip_blocks=True,
 )
 _env.filters["wrap"] = wrap_text
+_env.filters["chart_pcts"] = chart_bar_pcts
 
 # 长图调色（独立于 README house style，是导出产物自身的视觉）。
 PALETTE = {
@@ -123,11 +143,12 @@ def _render_layer_html(layer) -> str:
         bars = d.get("values", [])
         if not bars:
             return ""
+        pcts = chart_bar_pcts(bars)
         rows = "".join(
             f'<div class="ll-bar-row"><span class="ll-bar-label">{_esc(b.get("label",""))}</span>'
-            f'<div class="ll-bar-track"><div class="ll-bar-fill" style="width:{_bar_pct(b.get("value","0"))}%"></div></div>'
+            f'<div class="ll-bar-track"><div class="ll-bar-fill" style="width:{pcts[i]:.1f}%"></div></div>'
             f'<span class="ll-bar-val">{_esc(b.get("value",""))}</span></div>'
-            for b in bars
+            for i, b in enumerate(bars)
         )
         return f'<div class="ll-chart">{rows}</div>'
     return ""
@@ -141,13 +162,6 @@ def _esc(s: str) -> str:
         .replace(">", "&gt;")
         .replace('"', "&quot;")
     )
-
-
-def _bar_pct(val: str) -> str:
-    try:
-        return str(max(2, min(100, float(val))))
-    except (TypeError, ValueError):
-        return "20"
 
 
 _HTML_CSS = """

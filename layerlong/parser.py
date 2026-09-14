@@ -29,7 +29,8 @@ from .models import (
     wrap_text,
 )
 
-# 每类图层的高度与后续间距（像素）。
+# 每类图层的高度与后续间距（像素）。图表高度不在此表——它随条目数增长，
+# 见 parse_markdown 内 chart 分支。
 _HEIGHTS = {
     "title": 96.0,
     "section": 54.0,
@@ -37,7 +38,6 @@ _HEIGHTS = {
     "stat": 58.0,
     "divider": 22.0,
     "annotation": 46.0,
-    "chart": 160.0,
 }
 _GAPS = {
     "title": 18.0,
@@ -129,7 +129,10 @@ def parse_markdown(text: str, platform: Platform = "gzh", title: str | None = No
             y += h + _GAPS["stat"]
         elif stripped.lower().startswith("chart:"):
             data = _parse_chart(stripped[6:].strip())
-            h = _HEIGHTS["chart"] if data.get("values") else _HEIGHTS["body_line"]
+            bars = data.get("values", [])
+            # 高度 = 顶部 10 + 每条 30 + 底部 10，与模板的绘制节奏（y+10+30*i、
+            # 条高 16）一致；空图表按正文行高占位。
+            h = (20.0 + 30.0 * len(bars)) if bars else _HEIGHTS["body_line"]
             layers.append(
                 _make_layer(next_id("chart"), "chart", data, BBox(x=margin, y=y, w=content_w, h=h))
             )
