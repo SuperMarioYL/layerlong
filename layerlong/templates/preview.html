@@ -30,7 +30,7 @@
 <body>
   <header>
     <h1>layerlong · 分层长图预览</h1>
-    <p>粘贴 markdown → 分层 SVG 长图（每图层可寻址）→ 浏览器侧 PNG 导出</p>
+    <p>粘贴 markdown → 分层 SVG 长图 → 改一数据 → diff 高亮 → 浏览器侧 PNG 导出</p>
   </header>
   <main>
     <section class="panel editor">
@@ -52,8 +52,9 @@ stat: 留存率 | 68 | %
 </textarea>
       <div class="status" id="status"></div>
       <p class="hint">
-        改一个 <code>stat</code> 的值再渲染——每图层是一个可寻址的 <code>&lt;g id&gt;</code>，
-        产物是可编辑分层矢量，不是扁平 PNG。CLI：<code>layerlong render input.md -o out/</code>
+        改一个 <code>stat</code> 的值再点「渲染」——变化图层会高亮并列入状态行；
+        PNG 导出始终用不带高亮的干净 SVG。CLI：<code>layerlong render input.md -o out/</code>；
+        本地预览：<code>layerlong serve</code>
       </p>
     </section>
     <section class="panel preview">

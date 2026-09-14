@@ -27,6 +27,7 @@ dependencies = [
   "pydantic>=2.9",
   "click>=8.1",
   "openai>=1.40",
+  "python-multipart>=0.0.20",
 ]
 
 [project.scripts]

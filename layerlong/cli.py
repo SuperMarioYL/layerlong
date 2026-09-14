@@ -1,8 +1,9 @@
-"""layerlong CLI — render | extract | diff 薄入口。
+"""layerlong CLI — render | extract | diff | serve 薄入口。
 
   layerlong render input.md -o out/ [--platform gzh|xhs] [--prev prev.json]
   layerlong extract text.txt -o out/ [--model mock|deepseek|qwen|glm]
   layerlong diff prev.json curr.json
+  layerlong serve [--host 127.0.0.1] [--port 8000]
 """
 
 from __future__ import annotations
@@ -110,6 +111,16 @@ def diff_cmd(prev: Path, curr: Path) -> None:
     for ch in report.changes:
         click.echo(f"{ch.kind:10s}\t{ch.id}")
     click.echo(f"— {report.n_changed} / {len(c.layers)} 图层变化")
+
+
+@cli.command(help="启动 Web 预览页（粘贴 markdown → 分层长图 → diff 高亮 → PNG 导出）。")
+@click.option("--host", default="127.0.0.1", show_default=True, help="监听地址")
+@click.option("--port", default=8000, show_default=True, type=int, help="监听端口")
+def serve(host: str, port: int) -> None:
+    """本地跑 FastAPI 预览页（uvicorn，浏览器打开 http://host:port）。"""
+    import uvicorn
+
+    uvicorn.run("layerlong.web:app", host=host, port=port, reload=False)
 
 
 # 让 `layerlong extract` 而非 `layerlong extract-cmd`。
