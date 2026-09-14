@@ -7,10 +7,10 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import click
+from pydantic import ValidationError
 
 from .diff import diff_docs
 from .extract import extract
@@ -21,13 +21,32 @@ from .renderer import render_diff_html, render_html, render_svg
 SAMPLE_HINT = "可参考 examples/sample.md"
 
 
+def _read_text(path: Path) -> str:
+    """读 UTF-8 文本；解码失败报单行友好错误而非 traceback。"""
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise click.ClickException(f"无法读取 {path}：文件不是 UTF-8 文本") from exc
+
+
+def _load_json_doc(path: Path) -> LayerDoc:
+    """加载 LayerDoc JSON；坏输入报单行错误并退出码 1，不抛原始 traceback。"""
+    try:
+        return LayerDoc.model_validate_json(_read_text(path))
+    except ValidationError as exc:
+        errors = exc.errors()
+        detail = errors[0].get("msg", "invalid LayerDoc") if errors else "invalid LayerDoc"
+        raise click.ClickException(f"无法加载 {path}：LayerDoc JSON 无效（{detail}）") from exc
+
+
 def _load_doc(path: Path, platform: str) -> LayerDoc:
     """按扩展名加载输入为 LayerDoc。"""
-    text = path.read_text(encoding="utf-8")
     if path.suffix == ".json":
-        return LayerDoc.model_validate_json(text)
+        return _load_json_doc(path)
+    text = _read_text(path)
     if path.suffix == ".csv":
-        return parse_csv(text, platform=platform)  # type: ignore[arg-type]
+        # CSV 没有内嵌标题：用文件名作文档标题（parse_csv 不再拿列头名当标题）。
+        return parse_csv(text, platform=platform, title=path.stem)  # type: ignore[arg-type]
     return parse_markdown(text, platform=platform)  # type: ignore[arg-type]
 
 
@@ -52,7 +71,7 @@ def render(input: Path, out: Path, platform: str, prev: Path | None) -> None:
     (out / "long.html").write_text(render_html(doc), encoding="utf-8")
 
     if prev is not None:
-        prev_doc = LayerDoc.model_validate_json(prev.read_text(encoding="utf-8"))
+        prev_doc = _load_json_doc(prev)
         report = diff_docs(prev_doc, doc)
         (out / "long.diff.html").write_text(render_diff_html(doc, report), encoding="utf-8")
         click.echo(
@@ -82,8 +101,8 @@ def extract_cmd(input: Path, out: Path, platform: str, model: str) -> None:
 @click.argument("curr", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 def diff_cmd(prev: Path, curr: Path) -> None:
     """输出 per-layer 变化集（added/removed/changed/unchanged）。"""
-    p = LayerDoc.model_validate_json(prev.read_text(encoding="utf-8"))
-    c = LayerDoc.model_validate_json(curr.read_text(encoding="utf-8"))
+    p = _load_json_doc(prev)
+    c = _load_json_doc(curr)
     report = diff_docs(p, c)
     if not report.changes:
         click.echo("无图层。")

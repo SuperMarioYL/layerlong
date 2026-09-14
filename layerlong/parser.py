@@ -206,7 +206,8 @@ def parse_csv(text: str, platform: Platform = "gzh", title: str | None = None) -
         return fallback if fallback < len(header) else fallback
 
     li, vi, ui = col("label", 0), col("value", 1), col("unit", 2)
-    doc_title = title or header[0]
+    # CSV 无内嵌标题：不拿首列列头名（如 "label"）当文档标题。
+    doc_title = title or "Untitled"
 
     layers: list[Layer] = []
     y = 40.0
