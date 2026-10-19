@@ -22,11 +22,14 @@ def chart_bar_pcts(bars: list) -> list[float]:
 
     每条 = max(2, 100 * value / max_value)，上限 100；非数值或非正的
     最大值整体退化为 2% 最小条宽——条长必须反映数据本身。
+    千分位逗号（如 "1,280"）与首尾空白先剥离再解析，否则最大数值会
+    被记 0.0 而渲成最短柱——几何与数据矛盾。
     """
     values: list[float] = []
     for b in bars:
+        raw = str(b.get("value", "")).replace(",", "").strip()
         try:
-            values.append(float(b.get("value", "")))
+            values.append(float(raw))
         except (TypeError, ValueError):
             values.append(0.0)
     max_v = max(values, default=0.0)

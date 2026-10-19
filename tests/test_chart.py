@@ -77,6 +77,32 @@ class TestChartBarWidths(unittest.TestCase):
         self.assertEqual(chart_bar_pcts([]), [])
 
 
+class TestChartValueParsing(unittest.TestCase):
+    """v0.3.0 fix-2 回归：千分位逗号数值（如 "1,280"）按真实值折算条宽。
+
+    修复前 float("1,280") 解析失败记 0.0 → 2% 最小柱——实测
+    "chart: 月活,1,280; 付费,982; 留存,456" 时最大的 1,280 渲成 10.6px
+    最短柱而 982 渲成满宽，SVG/HTML 一致地误导。
+    """
+
+    def test_comma_thousands_separator_parsed_as_number(self):
+        pcts = chart_bar_pcts([{"value": "1,280"}, {"value": "982"}, {"value": "456"}])
+        self.assertEqual(pcts[0], 100.0)  # 修复前是 2.0（解析失败退化）
+        self.assertAlmostEqual(pcts[1], 100.0 * 982 / 1280, places=1)
+        self.assertAlmostEqual(pcts[2], 100.0 * 456 / 1280, places=1)
+
+    def test_svg_largest_comma_value_gets_widest_bar(self):
+        pcts = _svg_bar_widths("# t\nchart: 月活,1,280; 付费,982; 留存,456\n")
+        self.assertEqual(pcts[0], 100.0)  # 修复前最大值柱反而最短（2%）
+        self.assertGreater(pcts[1], pcts[2])
+        self.assertEqual(len(set(pcts)), 3)
+
+    def test_whitespace_around_value_is_stripped(self):
+        self.assertEqual(chart_bar_pcts([{"value": " 982 "}]), [100.0])
+        # 完全非数值的退化行为保持不变。
+        self.assertEqual(chart_bar_pcts([{"value": "1,2x8"}]), [2.0])
+
+
 class TestChartLayerHeight(unittest.TestCase):
     def test_chart_height_scales_with_bar_count(self):
         md = "# t\nchart: a,1; b,2; c,3; d,4; e,5; f,6; g,7\n正文段落"
