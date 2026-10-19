@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-20
+
+### Fixed
+
+- **`layerlong extract` 错误路径友好化**：非 UTF-8 输入此前在 extract 命令直接抛出原始 `UnicodeDecodeError` traceback（render/diff 路径的防护没有覆盖到它）；缺 `LAYERLONG_API_KEY` 时 `--model deepseek/qwen/glm` 也直接抛出原始 `RuntimeError`。现在两条路径都改为单行中文错误并以退出码 1 结束，mock 抽取行为不变。
+- **图表条宽容错千分位**：`"1,280"` 这类带千分位逗号的图表值此前解析失败、按 2% 最小柱宽渲染——最大数值反而渲成最短柱（实测 `月活,1,280; 付费,982; 留存,456` 时 1,280 柱 10.6px、982 柱满宽）。现在解析前剥离千分位逗号与首尾空白，SVG 与 HTML 两条导出共用同一比例计算。
+
+### Added
+
+- `pyproject.toml` 声明 `[dependency-groups] dev`（pytest），`uv run pytest` 成为可复现的测试入口——此前 pytest 未声明时会落到 PATH 上其他解释器，产生环境相关的假失败。
+- 开发测试入口写入 README。
+
 ## [0.2.0] - 2026-09-15
 
 ### Fixed
@@ -25,6 +37,7 @@
 
 首个发布：LayerDoc 数据模型、markdown/CSV 解析、分层 SVG/HTML 渲染、per-layer diff（只重渲变化图层）、mock 抽取与可选国产模型（DeepSeek/Qwen/GLM）抽取、FastAPI 预览页与浏览器侧 PNG 导出。
 
-[Unreleased]: https://github.com/SuperMarioYL/layerlong/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/SuperMarioYL/layerlong/compare/v0.3.0...HEAD
 [0.1.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.1.0
 [0.2.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.2.0
+[0.3.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.3.0

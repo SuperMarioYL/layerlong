@@ -125,3 +125,5 @@ True incremental rendering and broader export validation are future directions. 
 ## License and contributions
 
 See [LICENSE](./LICENSE). When reporting an issue, include a minimal input, the command, and the observed output.
+
+Development: `uv run pytest` runs the test suite (the dev dependency group is declared and syncs into the project venv); or `python -m unittest discover -s tests`.

@@ -14,7 +14,7 @@ from pathlib import Path
 import layerlong
 
 REPO = Path(__file__).resolve().parent.parent
-EXPECTED = "0.2.0"
+EXPECTED = "0.3.0"
 
 
 class TestVersionLockstep(unittest.TestCase):
@@ -35,8 +35,8 @@ class TestVersionLockstep(unittest.TestCase):
     def test_changelog_current_section(self):
         text = (REPO / "CHANGELOG.md").read_text(encoding="utf-8")
         self.assertIn(f"## [{EXPECTED}]", text)
-        self.assertIn("[Unreleased]: https://github.com/SuperMarioYL/layerlong/compare/v0.2.0...HEAD", text)
-        self.assertIn(f"[{EXPECTED}]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.2.0", text)
+        self.assertIn("[Unreleased]: https://github.com/SuperMarioYL/layerlong/compare/v0.3.0...HEAD", text)
+        self.assertIn(f"[{EXPECTED}]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.3.0", text)
 
     def test_web_app_version_follows_package(self):
         from layerlong.web import app

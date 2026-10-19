@@ -125,3 +125,5 @@ render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs�
 ## 许可与贡献
 
 许可见 [LICENSE](./LICENSE). 反馈问题时请提供最小输入、执行命令和实际输出。
+
+开发：`uv run pytest` 运行测试套件（dev 依赖组已声明，自动进项目 venv）；或 `python -m unittest discover -s tests`。

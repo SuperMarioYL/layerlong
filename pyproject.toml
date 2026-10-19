@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "layerlong"
-version = "0.2.0"
+version = "0.3.0"
 description = "Render Markdown, CSV or LayerDoc JSON as layered SVG/HTML infographics and compare semantic changes by layer ID."
 readme = "README.md"
 license = "MIT"
@@ -32,6 +32,9 @@ dependencies = [
 
 [project.scripts]
 layerlong = "layerlong.cli:cli"
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
 
 [project.urls]
 Homepage = "https://github.com/SuperMarioYL/layerlong"
