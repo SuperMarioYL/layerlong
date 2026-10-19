@@ -90,8 +90,12 @@ def render(input: Path, out: Path, platform: str, prev: Path | None) -> None:
 @click.option("--model", type=click.Choice(["mock", "deepseek", "qwen", "glm"]), default="mock", help="抽取后端")
 def extract_cmd(input: Path, out: Path, platform: str, model: str) -> None:
     """把自由文本一次性抽取为 LayerDoc JSON（作者拥有的已保存源）。"""
-    text = input.read_text(encoding="utf-8")
-    doc = extract(text, platform=platform, model=model)  # type: ignore[arg-type]
+    text = _read_text(input)
+    try:
+        doc = extract(text, platform=platform, model=model)  # type: ignore[arg-type]
+    except RuntimeError as exc:
+        # 缺 LAYERLONG_API_KEY / openai 包缺席等——单行中文报错，不抛栈。
+        raise click.ClickException(f"抽取失败：{exc}") from exc
     out.mkdir(parents=True, exist_ok=True)
     (out / "long.json").write_text(doc.model_dump_json(indent=2), encoding="utf-8")
     click.echo(f"已抽取（{model}）→ {out}/long.json，用 `layerlong render` 渲染")
