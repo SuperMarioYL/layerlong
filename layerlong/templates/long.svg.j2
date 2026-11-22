@@ -17,7 +17,7 @@
       <text x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 26 }}" font-size="20" font-weight="600" fill="{{ colors.section }}">{{ layer.data.text }}</text>
       <line x1="{{ layer.bbox.x }}" y1="{{ layer.bbox.y + 40 }}" x2="{{ layer.bbox.x + layer.bbox.w }}" y2="{{ layer.bbox.y + 40 }}" stroke="{{ colors.divider }}" stroke-width="1.5"/>
     {% elif layer.kind == 'text' %}
-      {% set lines = layer.data.lines or (layer.data.text | wrap(40)) %}
+      {% set lines = layer.data.text | wrap_fit(layer.bbox.w) %}
       <text x="{{ layer.bbox.x }}" y="{{ layer.bbox.y + 18 }}" font-size="15" fill="{{ colors.text }}">
         {% for line in lines %}<tspan x="{{ layer.bbox.x }}" {% if not loop.first %}dy="24"{% else %}dy="0"{% endif %}>{{ line }}</tspan>
         {% endfor %}</text>

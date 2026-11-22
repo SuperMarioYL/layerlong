@@ -96,6 +96,8 @@ layerlong extract text.txt -o out/ --model mock
 
 render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. extract defaults to mock; online extraction requires the selected provider configuration.
 
+Layer IDs are unique per document: the first `# ` heading is `title`, further headings are `title-1`, `title-2`, …. A LayerDoc whose IDs repeat is rejected on load instead of producing a wrong diff. Body text is wrapped at render time from the layer width, and `Layer.data` holds semantic content only — edit the text in the saved JSON and the next render draws it, with SVG and HTML agreeing. The change summary divides by the union of both versions' layers, so deleting three of four layers reads `3 / 4` rather than `3 / 1`.
+
 ## Integrations and responsibilities
 
 <picture>
@@ -116,9 +118,9 @@ The following routes are implemented in the source. Choose the input that matche
 
 ## Limits and next steps
 
-- Coordinate-only layout changes are not counted as semantic changes; diff compares layer kind and data.
+- Coordinate-only layout changes, including text wrapping, are not counted as semantic changes; diff compares layer kind and data.
 - The current CLI rewrites full outputs. A smaller changed-layer count is not evidence of incremental rendering speed.
-- The example uses deterministic parsing and does not exercise optional model extraction.
+- The example uses deterministic parsing and does not exercise optional model extraction. Mock extraction keeps lines it cannot turn into a value as body text instead of emitting empty stat rows.
 
 True incremental rendering and broader export validation are future directions. Preserve the saved LayerDoc when editing so comparisons use explicit structured versions.
 

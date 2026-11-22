@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 LayerKind = Literal["title", "text", "stat", "chart", "annotation", "divider"]
 RenderKind = Literal["svg", "html"]
@@ -68,11 +68,26 @@ class LayerDoc(BaseModel):
     渲染器把 LayerDoc 投影成 (1) 合成 SVG（每图层一个 ``<g id>``）或
     (2) HTML 长图（每图层一个 ``<section id>``）。diff 作用于两个 LayerDoc，
     输出 per-layer 变化集，渲染器只重渲变化图层。
+
+    layer id 是 diff 的配对键，必须唯一；加载作者手改的 saved JSON 时同样强制，
+    否则 diff 会把重复 id 的图层互相覆盖、静默给出错误的配对结果。
     """
 
     meta: Meta
     layers: list[Layer] = Field(default_factory=list)
     sources: list[DataSource] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _layer_ids_are_unique(self) -> "LayerDoc":
+        seen: set[str] = set()
+        duplicates: list[str] = []
+        for layer in self.layers:
+            if layer.id in seen and layer.id not in duplicates:
+                duplicates.append(layer.id)
+            seen.add(layer.id)
+        if duplicates:
+            raise ValueError(f"图层 id 必须唯一，重复：{', '.join(duplicates)}")
+        return self
 
 
 # 平台画布预设：公众号宽 750、小红书宽 1080（竖屏长宽比）。
@@ -118,3 +133,17 @@ def wrap_text(text: str, max_chars: int) -> list[str]:
         if buf:
             lines.append(buf)
     return lines or [""]
+
+
+def chars_per_line(content_w: float) -> int:
+    """一段内容宽度可容纳的字符数：中文按 ~15px/字计，最低 10 字/行。"""
+    return max(10, int(content_w / 15))
+
+
+def wrap_for_width(text: str, content_w: float) -> list[str]:
+    """按图层可用的内容宽度折行。
+
+    折行是 (文本, 宽度) 的渲染期投影：parser 用它算图层高度，SVG 渲染用它
+    画 tspan——同一个规则只在这里定义一次，不写进 Layer.data。
+    """
+    return wrap_text(text, chars_per_line(content_w))

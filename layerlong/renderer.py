@@ -12,7 +12,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .diff import DiffReport, changed_set
-from .models import LayerDoc, wrap_text
+from .models import LayerDoc, wrap_for_width
 
 _TEMPLATE_DIR = Path(__file__).parent / "templates"
 
@@ -44,7 +44,7 @@ _env = Environment(
     trim_blocks=True,
     lstrip_blocks=True,
 )
-_env.filters["wrap"] = wrap_text
+_env.filters["wrap_fit"] = wrap_for_width
 _env.filters["chart_pcts"] = chart_bar_pcts
 
 # 长图调色（独立于 README house style，是导出产物自身的视觉）。
@@ -117,7 +117,7 @@ def render_html(
 def render_diff_html(doc: LayerDoc, report: DiffReport) -> str:
     """渲染当前版本，仅高亮变化图层 + diff 横幅。"""
     hl = changed_set(report)
-    return render_html(doc, highlight=hl, diff_info=(report.n_changed, len(doc.layers)))
+    return render_html(doc, highlight=hl, diff_info=(report.n_changed, report.n_total))
 
 
 def _render_layer_html(layer) -> str:

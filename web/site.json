@@ -30,8 +30,8 @@
         "zh": "保留可编辑源"
       },
       "body": {
-        "en": "LayerDoc JSON survives image export.",
-        "zh": "图片导出后仍保留 LayerDoc JSON。"
+        "en": "LayerDoc JSON stays the source: edit its text and the next render draws it, because line wrapping is computed at render time.",
+        "zh": "LayerDoc JSON 始终是源：改其中的文本，下次渲染即按新文本绘制——折行在渲染时计算，不写死在数据里。"
       }
     },
     {
@@ -121,8 +121,8 @@
   },
   "limitations": [
     {
-      "en": "Coordinate-only layout changes are not counted as semantic changes; diff compares layer kind and data.",
-      "zh": "仅坐标变化不计为语义变化；diff 比较图层 kind 与 data。"
+      "en": "Coordinate-only layout changes, including text wrapping, are not counted as semantic changes; diff compares layer kind and data. The diff summary counts layers from both versions, so a deletion shows as 3 / 4 rather than 3 / 1.",
+      "zh": "仅坐标变化（含折行）不计为语义变化；diff 比较图层 kind 与 data。变化摘要的分母是两个版本的图层并集，删除 3 层显示 3 / 4 而非 3 / 1。"
     },
     {
       "en": "The current CLI rewrites full outputs. A smaller changed-layer count is not evidence of incremental rendering speed.",
@@ -224,8 +224,8 @@
           "zh": "配置"
         },
         "body": {
-          "en": "render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. serve starts the local web preview, where re-rendering after an edit highlights the changed layers. extract defaults to mock; online extraction requires the selected provider configuration.",
-          "zh": "render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs，--out 指定输出目录，--prev 添加差异 HTML。serve 启动本地 Web 预览页，改一数据再渲染即高亮变化图层。extract 默认 mock；在线抽取需要对应提供方配置。"
+          "en": "render accepts Markdown, CSV and LayerDoc JSON. --platform selects gzh or xhs, --out chooses the output directory, and --prev adds a diff HTML view. Layer IDs are unique per document: the first `# ` heading is `title` and any further ones are `title-1`, `title-2`, … A hand-edited LayerDoc whose IDs repeat is rejected on load instead of producing a wrong diff. serve starts the local web preview, where re-rendering after an edit highlights the changed layers. extract defaults to mock; online extraction requires the selected provider configuration.",
+          "zh": "render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs，--out 指定输出目录，--prev 添加差异 HTML。图层 ID 在文档内唯一：第一个 `# ` 标题是 `title`，后续为 `title-1`、`title-2`…；手改出重复 ID 的 LayerDoc 在加载时直接报错，不会给出错误的 diff 结果。serve 启动本地 Web 预览页，改一数据再渲染即高亮变化图层。extract 默认 mock；在线抽取需要对应提供方配置。"
         }
       },
       {
@@ -241,5 +241,5 @@
       }
     ]
   },
-  "content_version": "v0.3.0"
+  "content_version": "v0.4.0"
 }

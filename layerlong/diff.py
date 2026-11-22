@@ -56,6 +56,15 @@ class DiffReport(BaseModel):
     def n_changed(self) -> int:
         return len(self.changed_ids)
 
+    @property
+    def n_total(self) -> int:
+        """参与比较的图层总数——两个版本 id 的并集。
+
+        摘要分母必须是这个数，而不是当前文档的图层数：n_changed 含 removed，
+        用当前文档做分母会报出 "3 / 1 图层变化" 这类超过 100% 的比例。
+        """
+        return len({c.id for c in self.changes})
+
 
 def diff_docs(prev: LayerDoc, curr: LayerDoc) -> DiffReport:
     """比较两个 LayerDoc，返回 per-layer 变化集。

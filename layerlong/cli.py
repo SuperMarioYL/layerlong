@@ -76,7 +76,7 @@ def render(input: Path, out: Path, platform: str, prev: Path | None) -> None:
         report = diff_docs(prev_doc, doc)
         (out / "long.diff.html").write_text(render_diff_html(doc, report), encoding="utf-8")
         click.echo(
-            f"diff: {report.n_changed} / {len(doc.layers)} 图层变化，"
+            f"diff: {report.n_changed} / {report.n_total} 图层变化，"
             f"变化图层 → {report.changed_ids or '（无）'}"
         )
 
@@ -114,7 +114,7 @@ def diff_cmd(prev: Path, curr: Path) -> None:
         return
     for ch in report.changes:
         click.echo(f"{ch.kind:10s}\t{ch.id}")
-    click.echo(f"— {report.n_changed} / {len(c.layers)} 图层变化")
+    click.echo(f"— {report.n_changed} / {report.n_total} 图层变化")
 
 
 @cli.command(help="启动 Web 预览页（粘贴 markdown → 分层长图 → diff 高亮 → PNG 导出）。")

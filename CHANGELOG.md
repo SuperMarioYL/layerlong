@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-23
+
+### Fixed
+
+- **标题图层 id 唯一**：每个 `# ` 行此前都用硬编码 id `title`，含两个 H1 的文档会产出重复图层 id——SVG/HTML 出现重复 `<g id>`、`diff` 把重复 id 互相覆盖，只改第二个标题却把两个标题都报成 changed 并同时高亮。现在第一个标题保持 `title`，后续按 `title-1`、`title-2`… 编号；加载含重复 id 的 LayerDoc JSON 会直接报错（CLI 输出单行"图层 id 必须唯一"），不再静默给出错误配对。
+- **diff 摘要分母含删除图层**：变化数统计含 removed，但分母只数当前文档图层，删掉 4 层中的 3 层会显示 `3 / 1 图层变化`（空文档 `5 / 0`）。现在分母是两个版本文档图层 id 的并集，CLI、`layerlong diff` 与 HTML 差异横幅统一显示如 `3 / 4 图层变化`。
+- **折行不再写进图层数据**：正文折行结果此前存进 `Layer.data["lines"]` 并被 SVG 优先使用，导致三种错误：改 saved JSON 的 `text` 后 SVG 仍渲染旧折行（HTML 却显示新文本，两种导出不一致）；同一内容切 gzh/xhs 只因行数不同就被 `diff` 判为语义变化（违背"仅坐标变化不计为语义变化"）；缺 `lines` 的图层按硬编码 40 字折行、与解析器的 `max(10, 宽/15)`（gzh 为 44）不一致而压到下一图层。现在折行是渲染期按图层宽度计算的投影（`models.wrap_for_width`），`data` 只保留语义内容。
+- **mock 抽取不再产生空值 stat**：任何含数字且 ≤40 字的行此前都被送进 `stat:`，而析不出数值时用 `"{行} |  | "` 占位——一句普通叙述（如"我们在 2023 年完成了三次改版…"）会渲成标签是整句、值为空的 stat 行并从正文流中消失。现在析不出数值的行回退为正文字段。
+
+### Added
+
+- `tests/test_extract.py`：mock 抽取的回归测试（叙述句留正文、数值行仍为 stat、产物仍可渲染）。
+
 ## [0.3.0] - 2026-10-20
 
 ### Fixed
@@ -37,7 +50,8 @@
 
 首个发布：LayerDoc 数据模型、markdown/CSV 解析、分层 SVG/HTML 渲染、per-layer diff（只重渲变化图层）、mock 抽取与可选国产模型（DeepSeek/Qwen/GLM）抽取、FastAPI 预览页与浏览器侧 PNG 导出。
 
-[Unreleased]: https://github.com/SuperMarioYL/layerlong/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/SuperMarioYL/layerlong/compare/v0.4.0...HEAD
 [0.1.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.1.0
 [0.2.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.2.0
 [0.3.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.3.0
+[0.4.0]: https://github.com/SuperMarioYL/layerlong/releases/tag/v0.4.0

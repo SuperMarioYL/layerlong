@@ -96,6 +96,8 @@ layerlong extract text.txt -o out/ --model mock
 
 render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs，--out 指定输出目录，--prev 添加差异 HTML。extract 默认 mock；在线抽取需要对应提供方配置。
 
+图层 ID 在文档内唯一：第一个 `# ` 标题是 `title`，后续标题为 `title-1`、`title-2`…；加载 ID 重复的 LayerDoc 会直接报错，不会给出错误的 diff。正文折行在渲染时按图层宽度计算，`Layer.data` 只保存语义内容——手改 saved JSON 的文本后重新渲染即生效，SVG 与 HTML 显示一致。变化摘要的分母是两个版本的图层并集，删除图层显示如 `3 / 4 图层变化`。
+
 ## 集成与职责分工
 
 <picture>
@@ -116,9 +118,9 @@ render 接受 Markdown、CSV 与 LayerDoc JSON。--platform 选择 gzh 或 xhs�
 
 ## 限制与后续方向
 
-- 仅坐标变化不计为语义变化；diff 比较图层 kind 与 data。
+- 仅坐标变化（含折行）不计为语义变化；diff 比较图层 kind 与 data。
 - 当前 CLI 重写完整输出。较少的变化图层不代表已实现增量渲染加速。
-- 示例使用确定性解析，不验证可选模型抽取。
+- 示例使用确定性解析，不验证可选模型抽取。mock 抽取把析不出数值的行留作正文，不会生成空值 stat。
 
 真正的增量渲染与更多导出验证是后续方向。编辑时保留 LayerDoc，便于比较明确的结构化版本。
 

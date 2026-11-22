@@ -18,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from . import __version__
 from .diff import changed_set, diff_docs
 from .parser import parse_markdown
-from .renderer import render_html, render_svg
+from .renderer import render_diff_html, render_html, render_svg
 
 _BASE = Path(__file__).parent
 _TEMPLATES = _BASE / "templates"
@@ -55,7 +55,7 @@ def build_render_response(
         resp["changed_ids"] = report.changed_ids
         resp["n_changed"] = report.n_changed
         resp["svg_diff"] = render_svg(doc, highlight=highlight)
-        resp["html"] = render_html(doc, highlight=highlight, diff_info=(report.n_changed, len(doc.layers)))
+        resp["html"] = render_diff_html(doc, report)
     return resp
 
 

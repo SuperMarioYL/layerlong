@@ -46,10 +46,12 @@ def extract_mock(text: str, platform: Platform = "gzh") -> LayerDoc:
             md_lines.append(f"# {s}")
             title_set = True
             continue
-        # 含"数字 + 单位/百分号"的行当 stat。
+        # 含"数字 + 单位/百分号"的行当 stat；析不出数值的行（如叙述句）留在正文。
         if re.search(r"\d+(\.\d+)?\s*[%％万千亿]?", s) and len(s) <= 40:
-            md_lines.append(f"stat: {_heuristic_stat(s)}")
-            continue
+            stat = _heuristic_stat(s)
+            if stat is not None:
+                md_lines.append(f"stat: {stat}")
+                continue
         # 以「：」结尾或含冒号的结构行当 section。
         if s.endswith(("：", ":")) or ("：" in s and len(s) <= 20):
             md_lines.append(f"## {s.rstrip('：:')}")
@@ -60,13 +62,17 @@ def extract_mock(text: str, platform: Platform = "gzh") -> LayerDoc:
     return parse_markdown("\n".join(md_lines), platform=platform)
 
 
-def _heuristic_stat(s: str) -> str:
-    """尽力把含数字的行拆成 ``label | value | unit``。"""
+def _heuristic_stat(s: str) -> str | None:
+    """尽力把含数字的行拆成 ``label | value | unit``；析不出数值时返回 None。
+
+    返回 None 而不是 "{s} |  | " 占位：调用方据此把该行留在正文，
+    否则一句普通叙述会渲成标签是整句、值为空的 stat 行。
+    """
     m = re.search(r"^(?P<label>.*?)(?P<value>\d+(?:\.\d+)?)\s*(?P<unit>[%％万千亿倍元]?)\s*$", s)
     if m:
         label = m.group("label").strip().rstrip("：:，, ")
         return f"{label} | {m.group('value')} | {m.group('unit')}"
-    return f"{s} |  | "
+    return None
 
 
 def extract_model(

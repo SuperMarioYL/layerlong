@@ -1,7 +1,7 @@
 """markdown/CSV → LayerDoc 解析器。
 
 支持的 markdown schema：
-  ``# 标题``            → title 图层
+  ``# 标题``            → title 图层（第一个 id 为 ``title``，后续 ``title-1``…）
   ``## 分段``           → section（text 图层，role=section）
   普通行               → body（text 图层）
   ``stat: 标签 | 值 | 单位``  → stat 图层
@@ -9,7 +9,8 @@
   ``> 标注``            → annotation 图层
 
 图层 id 按种类顺序稳定编号（stat-0/stat-1…），故改一个值不改变结构时
-id 保持稳定——这是 diff 能精确配对的前提。
+id 保持稳定——这是 diff 能精确配对的前提。折行只是渲染期投影，不写进
+图层 data（见 models.wrap_for_width）。
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from .models import (
     Meta,
     PLATFORM_PRESETS,
     Platform,
+    chars_per_line,
     wrap_text,
 )
 
@@ -50,11 +52,6 @@ _GAPS = {
 }
 
 
-def _max_chars(content_w: float) -> int:
-    # 中文按 ~15px/字计；留余量，最低 10 字/行。
-    return max(10, int(content_w / 15))
-
-
 def _make_layer(
     lid: str, kind: str, data: dict, bbox: BBox, render: str = "svg"
 ) -> Layer:
@@ -67,7 +64,7 @@ def parse_markdown(text: str, platform: Platform = "gzh", title: str | None = No
     cw = preset["canvas_w"]
     margin = preset["margin"]
     content_w = cw - 2 * margin
-    max_chars = _max_chars(content_w)
+    max_chars = chars_per_line(content_w)
 
     layers: list[Layer] = []
     counters: dict[str, int] = {}
@@ -78,6 +75,13 @@ def parse_markdown(text: str, platform: Platform = "gzh", title: str | None = No
         n = counters.get(kind_name, 0)
         counters[kind_name] = n + 1
         return f"{kind_name}-{n}"
+
+    def next_title_id() -> str:
+        # 主标题 id 历史上固定为 "title"（已有 saved JSON / 测试依赖它）；
+        # 同一文档里后续的 `# ` 标题按 title-1、title-2… 编号，保证 id 唯一。
+        n = counters.get("title", 0)
+        counters["title"] = n + 1
+        return "title" if n == 0 else f"title-{n}"
 
     for raw in text.splitlines():
         line = raw.rstrip()
@@ -91,7 +95,7 @@ def parse_markdown(text: str, platform: Platform = "gzh", title: str | None = No
                 doc_title = t
             h = _HEIGHTS["title"]
             layers.append(
-                _make_layer("title", "title", {"text": t}, BBox(x=margin, y=y, w=content_w, h=h))
+                _make_layer(next_title_id(), "title", {"text": t}, BBox(x=margin, y=y, w=content_w, h=h))
             )
             y += h + _GAPS["title"]
         elif stripped.startswith("## "):
@@ -142,7 +146,7 @@ def parse_markdown(text: str, platform: Platform = "gzh", title: str | None = No
             h = _HEIGHTS["body_line"] * len(lines) + 8
             layers.append(
                 _make_layer(
-                    next_id("text"), "text", {"text": stripped, "lines": lines},
+                    next_id("text"), "text", {"text": stripped},
                     BBox(x=margin, y=y, w=content_w, h=h),
                 )
             )
